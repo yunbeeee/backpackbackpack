@@ -10,6 +10,9 @@ const connectDB = require('./config/database');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 
+const bodyParser = require('body-parser');
+const bookRoutes = require('./routes/bookregister');
+
 
 const passport = require('passport');
 const emailSignupRoutes = require('./routes/emailSignup');
@@ -32,6 +35,10 @@ console.log('emailSignupRoutes', emailSignupRoutes);
 //app.use('/api/signup/apple', appleSignupRoutes);
 //app.use('/api/signup/kakao', kakaoSignupRoutes);
 //app.use('/api/signup/naver', naverSignupRoutes);
+
+//책등록
+app.use(bodyParser.json());
+app.use('/api/books', bookRoutes);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
