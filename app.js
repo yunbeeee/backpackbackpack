@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 const logger = require('./utils/logger');
 
 const bodyParser = require('body-parser');
-const bookRoutes = require('./routes/bookregister');
+const bookRegisterRouter = require('./routes/bookregister');
 
 
 const passport = require('passport');
@@ -25,6 +25,16 @@ const app = express();
 require('dotenv').config();
 const uri = process.env.MONGODB_URI; // Get the MongoDB URI from the environment variables
 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    maxAge: 24 * 60 * 60 * 1000
+   }  // HTTPS 사용 시 true
+}));
+
 app.use(express.json());
 app.use(passport.initialize());
 app.use('/api/password', passwordResetRoutes);
@@ -36,9 +46,11 @@ console.log('emailSignupRoutes', emailSignupRoutes);
 //app.use('/api/signup/kakao', kakaoSignupRoutes);
 //app.use('/api/signup/naver', naverSignupRoutes);
 
+
+
 //책등록
 app.use(bodyParser.json());
-app.use('/api/books', bookRoutes);
+app.use('/api/books', bookRegisterRouter);
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {

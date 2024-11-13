@@ -29,14 +29,30 @@ exports.fetchBookData = async (query) => {
 };
 
 // 책 데이터베이스에 등록
-exports.registerBook = async (bookInfo) => {
+exports.registerBook = async (bookInfo, userId) => {  // userId 파라미터 추가
   try {
-    const existingBook = await Book.findOne({ isbn: bookInfo.isbn });
+    const existingBook = await Book.findOne({ 
+      isbn: bookInfo.isbn,
+      userId: bookInfo.userId  // 같은 사용자의 동일한 책만 체크
+    });
+    
     if (existingBook) {
-      return null;  // 이미 등록된 책일 경우
+      return null;
     }
 
-    const newBook = new Book(bookInfo);
+    let pageNum = 0;
+    if (bookInfo.item && bookInfo.item[0]?.subInfo?.itemPage) {
+      pageNum = parseInt(bookInfo.item[0].subInfo.itemPage);
+    } else if (bookInfo.subInfo?.itemPage) {
+      pageNum = parseInt(bookInfo.subInfo.itemPage);
+    }
+
+    const newBook = new Book({
+      ...bookInfo,
+      pageNum: pageNum,
+      userId: userId  // 사용자 ID 추가
+    });
+    
     await newBook.save();
     return newBook;
   } catch (err) {

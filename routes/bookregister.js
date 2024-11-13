@@ -2,12 +2,27 @@ const express = require('express');
 const router = express.Router();
 const bookController = require('../controllers/bookController');
 
-// 책 검색 및 등록 API
+// 책 검색 라우트
+router.get('/search', async (req, res) => {
+    try {
+        const query = req.query.query;
+        const bookData = await bookController.fetchBookData(query);
+        res.json(bookData);
+    } catch (error) {
+        console.error('책 검색 중 오류:', error);
+        res.status(500).json({ error: '책 검색 중 오류가 발생했습니다.' });
+    }
+});
+
+// 책 등록 라우트
 router.post('/register', async (req, res) => {
     try {
+        const userId = req.session.userId;  // 세션에서 사용자 ID 가져오기
+        console.log('User ID from session:', userId);
         if (!req.body.query || typeof req.body.query !== 'string') {
             return res.status(400).json({ error: '유효한 검색어를 입력해주세요.' });
         }
+        
         
         const bookData = await bookController.fetchBookData(req.body.query);
 
@@ -23,13 +38,17 @@ router.post('/register', async (req, res) => {
             genre: bookData.item[0].categoryName,
             category: bookData.item[0].categoryName,
             pageNum: parseInt(bookData.item[0].subInfo.itemPage, 10),
-            cover: bookData.item[0].cover
+            cover: bookData.item[0].cover,
+            userId: userId  // 사용자 ID 추가
         };
 
-        const newBook = await bookController.registerBook(bookInfo);
+        const newBook = await bookController.registerBook(bookInfo, userId);  // userId 전달
         
         if (newBook) {
-            return res.status(201).json({ message: '책이 성공적으로 등록되었습니다.', book: newBook });
+            return res.status(201).json({ 
+                message: '책이 성공적으로 등록되었습니다.', 
+                book: newBook 
+            });
         } else {
             return res.status(409).json({ error: '이미 등록된 책입니다.' });
         }
@@ -38,7 +57,6 @@ router.post('/register', async (req, res) => {
         res.status(500).json({ error: '책 등록 중 오류가 발생했습니다.' });
     }
 });
-
 // 모든 책 가져오기 API
 router.get('/', async (req, res) => {
   try {
