@@ -36,6 +36,8 @@ router.post('/', async (req, res) => {
         
         console.log(`Login successful for user: ${user._id}`);
 
+        req.session.userId = user._id;
+
         // Return the user information
         res.json({ 
             message: 'Login successful',
