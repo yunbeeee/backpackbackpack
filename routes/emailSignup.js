@@ -60,13 +60,13 @@ router.post('/initial', async (req, res) => {
 
 // Function to validate password strength
 function validatePassword(password) {
-    const minLength = 8;
+    const minLength = 10;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumber = /\d/.test(password);
     //const hasSpecialChar = /[^\w]/.test(password);
 
     if (password.length < minLength) {
-        return { isValid: false, message: 'Password must be at least 8 characters long' };
+        return { isValid: false, message: 'Password must be at least 10 characters long' };
     }
 
     if (!hasUpperCase) {
@@ -127,6 +127,7 @@ router.post('/complete', async (req, res) => {
         // Validate the password
         const passwordValidation = validatePassword(password);
         if (!passwordValidation.isValid) {
+            console.log('Password validation failed:', passwordValidation.message);
             return res.status(400).json({ message: passwordValidation.message });
         }
 
@@ -149,56 +150,11 @@ router.post('/complete', async (req, res) => {
         // Save the updated user to the database
         await user.save();
 
-        res.status(200).json({ message: 'Signup completed successfully' });
+        return res.status(200).json({ message: 'Signup completed successfully' });
     } catch (error) {
         console.error('Complete signup error:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        return res.status(500).json({ message: 'Internal server error' });
     }
 });
-
-
-/*
-// Step 2: Complete signup with (1) password, (2) username
-router.post('/complete', async (req, res) => {
-    try {
-        const { userId, password, username } = req.body;
-        console.log(`Attempting to complete signup for user with ID: ${userId}`);
-
-        // Validate the password
-        const passwordValidation = validatePassword(password);
-        if (!passwordValidation.isValid) {
-            return res.status(400).json({ message: passwordValidation.message });
-        }
-
-        // Find the user by ID
-        const user = await User.findById(userId);
-        if (!user) {
-            console.log(`User with ID ${userId} not found`);
-            return res.status(404).json({ message: 'User not found' });
-        }
-
-        // Check if the username is already taken
-        const existingUsername = await User.findOne({ username });
-        if (existingUsername) {
-            console.log(`Username ${username} already taken`);
-            return res.status(400).json({ message: 'Username already taken' });
-        }
-
-        // Update the user with password and username
-        user.password = password;
-        user.username = username;
-        user.signupComplete = true;
-
-        // Save the updated user to the database
-        await user.save();
-
-        res.status(200).json({ message: 'Signup completed successfully' });
-    } catch (error) {
-        console.error('Complete signup error:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-});
-
-*/
 
 module.exports = router;

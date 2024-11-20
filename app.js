@@ -9,6 +9,7 @@ const passwordResetRoutes = require('./routes/passwordReset');
 const connectDB = require('./config/database');
 const mongoose = require('mongoose');
 const logger = require('./utils/logger');
+const cors = require('cors');
 
 
 const passport = require('passport');
@@ -19,13 +20,18 @@ const emailSignupRoutes = require('./routes/emailSignup');
 const loginRoutes = require('./routes/login');
 
 const app = express();
+app.use(cors({
+  origin: '*', // Be more specific in production
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 require('dotenv').config();
 const uri = process.env.MONGODB_URI; // Get the MongoDB URI from the environment variables
 
 app.use(express.json());
 app.use(passport.initialize());
 app.use('/api/password', passwordResetRoutes);
-app.use('/signup', emailSignupRoutes);
+app.use('/api/signup', emailSignupRoutes);
 app.use('/login', loginRoutes);
 console.log('loginRoutes', loginRoutes);
 console.log('emailSignupRoutes', emailSignupRoutes);
