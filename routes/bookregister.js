@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const bookController = require('../controllers/bookController');
 
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../.env') }); // Load the dotenv file
+
 // 책 검색 라우트
 router.get('/search', async (req, res) => {
     try {
@@ -39,6 +42,9 @@ router.post('/register', async (req, res) => {
             category: bookData.item[0].categoryName,
             pageNum: parseInt(bookData.item[0].subInfo.itemPage, 10),
             cover: bookData.item[0].cover,
+            status: 'reading', // set up the default status
+            startDate: new Date(),
+            completedDate: null,
             userId: userId  // 사용자 ID 추가
         };
 

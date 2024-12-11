@@ -38,7 +38,7 @@ app.use(session({
   saveUninitialized: false,
   cookie: {
     secure: false,
-    maxAge: 24 * 60 * 60 * 1000
+    maxAge: 24 * 60 * 60 * 1000 // change when Flutter app is ready
    }  // HTTPS 사용 시 true
 }));
 
@@ -74,5 +74,11 @@ const startServer = async () => {
   }
 }
 startServer();
+
+app._router.stack.forEach(function(r){
+    if (r.route && r.route.path){
+        console.log(r.route.path)
+    }
+});
 
 module.exports = app;

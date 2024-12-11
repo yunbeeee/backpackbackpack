@@ -5,7 +5,7 @@ const catchAsync = require('../utils/catchAsync');
 exports.getCurrentlyReadingBooks = catchAsync(async (req, res) => {
     // Get books that the current user is reading
     const books = await Book.find({
-        user: req.user._id,
+        user: req.user.userId,
         status: 'reading'  // Assuming you have a status field in bookModel
     }).select('title author');
 
@@ -16,11 +16,24 @@ exports.getCurrentlyReadingBooks = catchAsync(async (req, res) => {
 });
 
 exports.createMemo = catchAsync(async (req, res) => {
-    // Verify that the book exists and belongs to the user
+    console.log('Book ID from params:', req.params.bookId);
+    console.log('User ID from token:', req.user.userId);
+    
+    // Find book without user filter first to debug
+    const anyBook = await Book.findById(req.params.bookId);
+    console.log('Book found without user filter:', anyBook);
+    
+    if (anyBook) {
+        console.log('Book userId:', anyBook.userId);
+        console.log('Do IDs match?', anyBook.userId.toString() === req.user.userId);
+    }
+
+    // Changed the query to match your Book model's field name
     const book = await Book.findOne({
         _id: req.params.bookId,
-        user: req.user._id
+        userId: req.user.userId  // This should match the field name in your Book model
     });
+    console.log('Found book with both conditions:', book); // Add this debug log
 
     if (!book) {
         return res.status(404).json({
@@ -33,7 +46,7 @@ exports.createMemo = catchAsync(async (req, res) => {
     const memo = await Memo.create({
         content: req.body.content,
         title: req.body.title,
-        user: req.user._id,
+        user: req.user.userId,
         book: req.params.bookId,
         createdAt: new Date(),
         updatedAt: new Date()
@@ -47,7 +60,7 @@ exports.createMemo = catchAsync(async (req, res) => {
 
 exports.getAllMemos = catchAsync(async (req, res) => {
     const memos = await Memo.find({ 
-        user: req.user._id,
+        user: req.user.userId,
         book: req.params.bookId
     });
     
@@ -61,7 +74,7 @@ exports.getMemo = catchAsync(async (req, res) => {
     const memo = await Memo.findOne({
         _id: req.params.id,
         book: req.params.bookId,
-        user: req.user._id
+        user: req.user.userId
     });
 
     if (!memo) {
@@ -88,7 +101,7 @@ exports.updateMemo = catchAsync(async (req, res) => {
         {
             _id: req.params.id,
             book: req.params.bookId,
-            user: req.user._id
+            user: req.user.userId
         },
         updateData,
         {
@@ -114,7 +127,7 @@ exports.deleteMemo = catchAsync(async (req, res) => {
     const memo = await Memo.findOneAndDelete({
         _id: req.params.id,
         book: req.params.bookId,
-        user: req.user._id
+        user: req.user.userId
     });
 
     if (!memo) {
