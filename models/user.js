@@ -10,7 +10,11 @@ const userSchema = new mongoose.Schema({
     username: { type: String, sparse: true, unique: true },
     authMethod: { type: String, required: true },
     signupComplete: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now }
+    createdAt: { type: Date, default: Date.now },
+    books: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Book'
+    }]
 });
 
 // Hash the password before saving

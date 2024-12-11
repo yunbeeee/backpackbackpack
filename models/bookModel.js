@@ -11,11 +11,31 @@ const bookSchema = new Schema({
   pageNum: { type: Number, required: true },
   cover: { type: String },
   userId: {
-    type: Schema.Types.ObjectId,  // MongoDB의 ObjectId 타입
-    ref: 'User',                  // User 모델 참조
+    type: Schema.Types.ObjectId,
+    ref: 'User',
     required: true
-  }
+  },
+  status: {
+    type: String,
+    enum: ['reading', 'completed'],
+    default: 'reading'
+  },
+  startDate: {
+    type: Date,
+    default: null
+  },
+  completedDate: {
+    type: Date,
+    default: null
+  },
+  memos: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Memo'
+  }]
+}, {
+  timestamps: true
 });
 
+const Book = mongoose.model('Book', bookSchema);
 
-module.exports = mongoose.model('Book', bookSchema);
+module.exports = Book;

@@ -13,6 +13,7 @@ const cors = require('cors');
 
 const bodyParser = require('body-parser');
 const bookRegisterRouter = require('./routes/bookregister');
+const memoRoutes = require('./routes/memo');
 
 
 const passport = require('passport');
@@ -43,30 +44,23 @@ app.use(session({
 
 app.use(express.json());
 app.use(passport.initialize());
+
+// Signup, Login, Password Reset
 app.use('/api/password', passwordResetRoutes);
 app.use('/api/signup', emailSignupRoutes);
-app.use('/login', loginRoutes);
+app.use('/api/auth', loginRoutes);
 console.log('loginRoutes', loginRoutes);
 console.log('emailSignupRoutes', emailSignupRoutes);
 //app.use('/api/signup/apple', appleSignupRoutes);
 //app.use('/api/signup/kakao', kakaoSignupRoutes);
 //app.use('/api/signup/naver', naverSignupRoutes);
 
-
-
 //책등록
 app.use(bodyParser.json());
 app.use('/api/books', bookRegisterRouter);
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
+//메모
+app.use('/api/memos', memoRoutes);
 
 const startServer = async () => {
   try {

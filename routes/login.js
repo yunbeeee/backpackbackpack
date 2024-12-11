@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 const router = express.Router();
 
-router.post('/', async (req, res) => {
+router.post('/login', async (req, res) => {
     try {
         const { login, password } = req.body;
         console.log(`Attempting to login user with login: ${login}`);
