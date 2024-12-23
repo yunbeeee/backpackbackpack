@@ -2,7 +2,7 @@ const Book = require('../models/bookModel');
 const axios = require('axios');
 
 // 알라딘 Open API에서 책 정보 가져오기
-exports.fetchBookData = async (query) => {
+exports.searchByTitle = async (query) => {
   try {
     const apiUrl = "http://www.aladin.co.kr/ttb/api/ItemSearch.aspx";
     const params = {
@@ -25,6 +25,29 @@ exports.fetchBookData = async (query) => {
   } catch (err) {
     console.error("알라딘 API 호출 중 오류 발생:", err);
     return null;
+  }
+};
+
+// 책 상세 정보 가져오기 함수 추가
+exports.getBookDetail = async (itemId) => {
+  try {
+      const apiUrl = "http://www.aladin.co.kr/ttb/api/ItemLookUp.aspx";
+      const params = {
+          ttbkey: process.env.ALADIN_API_KEY,
+          ItemId: itemId,
+          ItemIdType: 'ItemId',
+          Output: 'js',
+          Version: '20131101'
+      };
+
+      const response = await axios.get(apiUrl, { params });
+      if (response.status === 200 && response.data.item) {
+          return response.data.item[0];
+      }
+      return null;
+  } catch (err) {
+      console.error("책 상세 정보 조회 중 오류:", err);
+      return null;
   }
 };
 
@@ -61,13 +84,14 @@ exports.registerBook = async (bookInfo, userId) => {  // userId 파라미터 추
   }
 };
 
-// 모든 책 가져오기
-exports.getAllBooks = async () => {
+// 사용자의 책 목록을 가져오는 함수
+exports.getUserBooks = async (userId) => {
   try {
-    const books = await Book.find();
-    return books;
-  } catch (err) {
-    console.error("책 목록 가져오기 중 오류 발생:", err);
-    throw err;
+      // userId에 해당하는 모든 책을 찾아서 반환
+      const books = await Book.find({ userId: userId });
+      return books;
+  } catch (error) {
+      console.error('사용자 책 목록 조회 중 오류:', error);
+      throw error;
   }
 };

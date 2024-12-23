@@ -13,6 +13,7 @@ const cors = require('cors');
 
 const bodyParser = require('body-parser');
 const bookRegisterRouter = require('./routes/bookregister');
+const bookSearchRouter = require('./routes/bookSearch');
 const memoRoutes = require('./routes/memo');
 
 
@@ -57,7 +58,10 @@ console.log('emailSignupRoutes', emailSignupRoutes);
 
 //책등록
 app.use(bodyParser.json());
-app.use('/api/books', bookRegisterRouter);
+app.use('/api/books/register', bookRegisterRouter);
+
+//책검색
+app.use('/api/books/search', bookSearchRouter);
 
 //메모
 app.use('/api/memos', memoRoutes);

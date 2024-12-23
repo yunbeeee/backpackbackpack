@@ -25,7 +25,7 @@
     "mongodb": "^6.10.0",
     "mongoose": "^8.7.2",
     "nodemailer": "^6.9.15",
-    "nodemon": "^3.1.7",
+    "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-apple": "^2.0.2",
     "passport-kakao": "^1.0.1",
