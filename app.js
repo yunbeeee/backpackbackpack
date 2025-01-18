@@ -22,6 +22,7 @@ const emailSignupRoutes = require('./routes/emailSignup');
 //const kakaoSignupRoutes = require('./routes/kakaoSignup');
 //const naverSignupRoutes = require('./routes/naverSignup');
 const loginRoutes = require('./routes/login');
+const ocrRouter = require('./routes/ocr');
 
 const app = express();
 app.use(cors({
@@ -43,6 +44,7 @@ app.use(session({
 }));
 
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(passport.initialize());
 
 // Signup, Login, Password Reset
@@ -61,6 +63,9 @@ app.use('/api/books', bookRegisterRouter);
 
 //메모
 app.use('/api/memos', memoRoutes);
+
+// Add this with your other app.use statements
+app.use('/api', ocrRouter);
 
 const startServer = async () => {
   try {

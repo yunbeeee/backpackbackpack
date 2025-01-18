@@ -26,7 +26,6 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: '유효한 검색어를 입력해주세요.' });
         }
         
-        
         const bookData = await bookController.fetchBookData(req.body.query);
 
         if (!bookData || !bookData.item) {
