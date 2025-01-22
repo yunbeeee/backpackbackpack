@@ -7,7 +7,6 @@ const sharp = require('sharp');
 
 router.post("/extract-text", async (req, res) => {
   const { imageUrl } = req.body;
-  const imagePath = './downloaded_image.jpg';
   const processedImagePath = './processed_image.jpg';
 
   console.log("Received imageUrl:", imageUrl);
@@ -23,19 +22,31 @@ router.post("/extract-text", async (req, res) => {
 
     console.log("Processing image...");
     await sharp(buffer)
-      .resize(800, 600, {
+      .resize(1200, 1600, {
         fit: 'inside',
         withoutEnlargement: true
       })
       .grayscale()
-      .sharpen()
+      .linear(1.5, -0.2)
+      .median(1)
+      .sharpen({
+        sigma: 1.5,
+        m1: 1,
+        m2: 2,
+        x1: 2,
+        y2: 10,
+        y3: 20
+      })
+      .threshold(150)
+      .resize({ width: 1000 })
       .toFile(processedImagePath);
 
     console.log("Extracting text with Tesseract...");
     const config = {
       lang: 'kor+eng',
       oem: 1,
-      psm: 3,
+      psm: 4,
+      dpi: 300,
     };
     
     const text = await Tesseract.recognize(processedImagePath, config);

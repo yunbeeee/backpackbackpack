@@ -23,6 +23,7 @@ const emailSignupRoutes = require('./routes/emailSignup');
 //const naverSignupRoutes = require('./routes/naverSignup');
 const loginRoutes = require('./routes/login');
 const ocrRouter = require('./routes/ocr');
+const googleOcrRouter = require('./routes/googleOcr');
 
 const app = express();
 app.use(cors({
@@ -66,6 +67,7 @@ app.use('/api/memos', memoRoutes);
 
 // Add this with your other app.use statements
 app.use('/api', ocrRouter);
+app.use('/api/google-ocr', googleOcrRouter);
 
 const startServer = async () => {
   try {

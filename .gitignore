@@ -128,3 +128,6 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Google Cloud Vision API keys
+backpack1-f4dc0fc9f63e.json
