@@ -32,7 +32,7 @@
     "node-cache": "^5.1.2",
     "node-tesseract-ocr": "^2.2.1",
     "nodemailer": "^6.9.15",
-    "nodemon": "^3.1.7",
+    "nodemon": "^3.1.9",
     "passport": "^0.7.0",
     "passport-apple": "^2.0.2",
     "passport-kakao": "^1.0.1",
