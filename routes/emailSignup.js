@@ -123,6 +123,12 @@ router.post('/complete', async (req, res) => {
     try {
         const { userId, password } = req.body;
         console.log(`Attempting to complete signup for user with ID: ${userId}`);
+        // Find the user by ID
+        const user = await User.findById(userId);
+        if (!user) {
+            console.log(`User with ID ${userId} not found`);
+            return res.status(404).json({ message: 'User not found' });
+        }
 
         // Validate the password
         const passwordValidation = validatePassword(password);
@@ -131,21 +137,12 @@ router.post('/complete', async (req, res) => {
             return res.status(400).json({ message: passwordValidation.message });
         }
 
-        // Find the user by ID
-        const user = await User.findById(userId);
-        if (!user) {
-            console.log(`User with ID ${userId} not found`);
-            return res.status(404).json({ message: 'User not found' });
-        }
+        // Hash the password
+        //const hashedPassword = await bcrypt.hash(password, 10);
 
-        // Check if the username has been set
-        if (!user.username) {
-            return res.status(400).json({ message: 'Username must be set before completing signup' });
-        }
-
-        // Update the user with password
-        user.password = password;
-        user.signupComplete = true;
+        // Update the user with hashed password
+        user.password = password; // 해시된 비밀번호 저장
+        user.signupComplete = true; // 회원가입 완료
 
         // Save the updated user to the database
         await user.save();

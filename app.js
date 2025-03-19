@@ -26,7 +26,9 @@ const loginRoutes = require('./routes/login');
 
 const app = express();
 app.use(cors({
-  origin: '*', // Be more specific in production
+  // origin: '*', // Be more specific in production
+  origin: ['http://localhost:3000', 'http://localhost:5173', 'http://10.0.2.2:8080'],  // Flutter 에뮬레이터 주소 추가
+  credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
