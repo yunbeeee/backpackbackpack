@@ -1,20 +1,12 @@
 const express = require('express');
 const memoController = require('../controllers/memoController');
 const auth = require('../middleware/auth');
-const multer = require('multer');
+const upload = require('../middleware/upload');  // Import from middleware
 const ocrController = require('../controllers/ocrController');
 
 const router = express.Router();
 
-// Configure multer for file upload
-const upload = multer({
-  limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
-  }
-});
-
-// Move this test route BEFORE the auth middleware
-// Add a test route without auth middleware
+// Use the imported upload middleware
 router.post('/ocr-test', 
   upload.single('image'),
   ocrController.extractText
@@ -39,6 +31,18 @@ router.get('/reading-books', memoController.getCurrentlyReadingBooks);
 router.post('/ocr', 
   upload.single('image'),
   ocrController.extractText
+);
+
+// Route for creating memo from camera/OCR
+router.post('/camera-memo',
+  auth,
+  memoController.createMemoFromCamera
+);
+
+// Route for saving memo with book
+router.post('/save-with-book',
+  auth,
+  memoController.saveMemoWithBook
 );
 
 module.exports = router;

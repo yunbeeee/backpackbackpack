@@ -6,4 +6,21 @@ const signupLimiter = rateLimit({
     message: "Too many signup attempts from this IP, please try again later."
 });
 
-module.exports = signupLimiter;
+const ocrLimiter = rateLimit({
+    windowMs: 1000, // 1 second
+    max: 1, // Limit each IP to 1 request per second
+    message: "Too many OCR requests, please try again later."
+});
+
+// Add new rate limiter for real-time OCR
+const realtimeOcrLimiter = rateLimit({
+    windowMs: 1000, // 1 second
+    max: 2, // Allow 2 requests per second for real-time updates
+    message: "Too many real-time OCR requests, please try again later."
+});
+
+module.exports = {
+    signupLimiter,
+    ocrLimiter,
+    realtimeOcrLimiter
+};

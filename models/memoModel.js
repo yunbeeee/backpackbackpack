@@ -7,7 +7,7 @@ const memoSchema = new mongoose.Schema({
     },
     title: {
         type: String,
-        default: '제목을 입력하세요'
+        default: '새로운 메모'
     },
     user: {
         type: mongoose.Schema.Types.ObjectId,
@@ -17,7 +17,14 @@ const memoSchema = new mongoose.Schema({
     book: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Book',
-        required: [true, 'Book ID is required']
+    },
+    image: {
+        type: String,
+    },
+    status: {
+        type: String,
+        enum: ['draft', 'saved'],
+        default: 'draft'
     },
     createdAt: {
         type: Date,
@@ -31,6 +38,9 @@ const memoSchema = new mongoose.Schema({
 
 // Middleware to update the 'updatedAt' field on save
 memoSchema.pre('save', function(next) {
+    if (this.status === 'saved' && !this.book) {
+        next(new Error('Book selection is required when saving a memo'));
+    }
     this.updatedAt = Date.now();
     next();
 });

@@ -142,3 +142,70 @@ exports.deleteMemo = catchAsync(async (req, res) => {
         data: null
     });
 });
+
+exports.createMemoFromCamera = catchAsync(async (req, res) => {
+    const { text, imageData } = req.body;
+    const userId = req.user.userId;
+
+    const memo = await Memo.create({
+        content: text,
+        title: '새로운 메모',
+        user: userId,
+        image: imageData,
+        book: null,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    });
+
+    res.status(201).json({
+        status: 'success',
+        data: memo
+    });
+});
+
+exports.saveMemoWithBook = catchAsync(async (req, res) => {
+    const { memoId, bookId, title } = req.body;
+    const userId = req.user.userId;
+
+    // Find the memo
+    const memo = await Memo.findOne({
+        _id: memoId,
+        user: userId
+    });
+
+    if (!memo) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'Memo not found or unauthorized'
+        });
+    }
+
+    // Verify the book exists and belongs to the user
+    const book = await Book.findOne({
+        _id: bookId,
+        userId: userId,
+        status: 'reading'
+    });
+
+    if (!book) {
+        return res.status(404).json({
+            status: 'fail',
+            message: 'Book not found or not in reading status'
+        });
+    }
+
+    // Update memo with book and title
+    memo.book = bookId;
+    if (title) memo.title = title;
+    await memo.save();
+
+    // Update book memos array
+    await Book.findByIdAndUpdate(bookId, {
+        $push: { memos: memoId }
+    });
+
+    res.status(200).json({
+        status: 'success',
+        data: memo
+    });
+});

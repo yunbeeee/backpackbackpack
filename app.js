@@ -16,15 +16,14 @@ const bookRegisterRouter = require('./routes/bookregister');
 const bookSearchRouter = require('./routes/bookSearch');
 const memoRoutes = require('./routes/memo');
 
-
 const passport = require('passport');
 const emailSignupRoutes = require('./routes/emailSignup');
 //const appleSignupRoutes = require('./routes/appleSignup');
 //const kakaoSignupRoutes = require('./routes/kakaoSignup');
 //const naverSignupRoutes = require('./routes/naverSignup');
 const loginRoutes = require('./routes/login');
-const ocrRouter = require('./routes/ocr');
-const googleOcrRouter = require('./routes/googleOcr');
+const ocrRoutes = require('./routes/ocr');
+//const googleOcrRouter = require('./routes/googleOcr');
 
 const app = express();
 app.use(cors({
@@ -70,8 +69,7 @@ app.use('/api/books/search', bookSearchRouter);
 app.use('/api/memos', memoRoutes);
 
 // Add this with your other app.use statements
-app.use('/api', ocrRouter);
-app.use('/api/google-ocr', googleOcrRouter);
+app.use('/api/ocr', ocrRoutes);
 
 const startServer = async () => {
   try {
